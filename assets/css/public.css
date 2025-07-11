@@ -1,0 +1,604 @@
+/* Estilos para o frontend público Track17 */
+
+/* Seção de rastreamento na página do pedido */
+.woocommerce-order-tracking {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 30px 0;
+}
+
+.woocommerce-order-tracking h2 {
+    margin: 0 0 20px 0;
+    color: #212529;
+    font-size: 24px;
+    border-bottom: 2px solid #007cba;
+    padding-bottom: 10px;
+}
+
+.wc-track17-tracking-info p {
+    margin: 12px 0;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.wc-track17-tracking-info strong {
+    color: #212529;
+    font-weight: 600;
+}
+
+.tracking-code {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Status de rastreamento */
+.wc-track17-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff;
+    margin-left: 8px;
+}
+
+.wc-track17-status-sem-rastreio {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.wc-track17-status-sem-informacoes {
+    background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+    color: #2c3e50;
+}
+
+.wc-track17-status-postado {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.wc-track17-status-em-transito {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.wc-track17-status-entregue {
+    background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.wc-track17-status-taxado {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.wc-track17-status-devolvido {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.wc-track17-status-falha-entrega {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.wc-track17-status-aguardando-retirada {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.wc-track17-status-excecao {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+/* Página de rastreamento na conta */
+.wc-track17-my-tracking {
+    max-width: 800px;
+}
+
+.wc-track17-my-tracking h2 {
+    margin-bottom: 25px;
+    color: #212529;
+    font-size: 28px;
+}
+
+.wc-track17-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.wc-track17-order-item {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wc-track17-order-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.order-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.order-header h3 {
+    margin: 0;
+    color: #212529;
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-date {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.tracking-info {
+    display: grid;
+    gap: 15px;
+}
+
+.tracking-code,
+.tracking-status,
+.last-update {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tracking-code .code {
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
+}
+
+.copy-code {
+    background: #007cba;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.copy-code:hover {
+    background: #005a87;
+}
+
+.tracking-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.track-button,
+.view-order {
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.track-button {
+    background: #007cba;
+    color: #fff;
+}
+
+.track-button:hover {
+    background: #005a87;
+    color: #fff;
+}
+
+.view-order {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #e9ecef;
+}
+
+.view-order:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* Formulário de rastreamento (shortcode/widget) */
+.wc-track17-tracking-form {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.wc-track17-tracking-form h3 {
+    margin: 0 0 20px 0;
+    color: #212529;
+    font-size: 22px;
+}
+
+.tracking-form .form-group {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.tracking-form input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.tracking-form input[type="text"]:focus {
+    outline: none;
+    border-color: #77ccc9;
+    box-shadow: 0 0 0 3px rgba(119, 204, 201, 0.1);
+}
+
+.tracking-form button {
+    padding: 12px 24px;
+    background: var(--btn-accented-bgcolor);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.tracking-form button:hover {
+    background: var(--btn-accented-bgcolor-hover);
+    color: #fff;
+
+}
+
+.tracking-form button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Resultado do rastreamento */
+.tracking-result {
+    padding: 20px;
+    border-radius: 8px;
+    animation: wc-track17-fade-in 0.5s ease-out;
+}
+
+.tracking-result h4 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+}
+
+.tracking-result p {
+    margin: 8px 0;
+}
+
+.tracking-result .track-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background: #007cba;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.tracking-result .track-link:hover {
+    background: #005a87;
+    color: #fff;
+}
+
+/* Widget de rastreamento */
+.widget_wc_track17_tracking_widget {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.widget_wc_track17_tracking_widget .widget-title {
+    margin: 0 0 15px 0;
+    color: #212529;
+    font-size: 18px;
+}
+
+/* Estados de loading */
+.wc-track17-loading {
+    position: relative;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.wc-track17-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007cba;
+    border-radius: 50%;
+    animation: wc-track17-public-spin 1s linear infinite;
+}
+
+@keyframes wc-track17-public-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animações */
+@keyframes wc-track17-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wc-track17-order-item {
+    animation: wc-track17-fade-in 0.5s ease-out;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .woocommerce-order-tracking,
+    .wc-track17-tracking-form {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .wc-track17-order-item {
+        padding: 20px;
+    }
+    
+    .order-header h3 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .tracking-form .form-group {
+        flex-direction: column;
+    }
+    
+    .tracking-form input[type="text"],
+    .tracking-form button {
+        width: 100%;
+    }
+    
+    .tracking-actions {
+        flex-direction: column;
+    }
+    
+    .track-button,
+    .view-order {
+        text-align: center;
+    }
+    
+    .tracking-code,
+    .tracking-status,
+    .last-update {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .woocommerce-order-tracking h2 {
+        font-size: 20px;
+    }
+    
+    .wc-track17-my-tracking h2 {
+        font-size: 24px;
+    }
+    
+    .wc-track17-tracking-form h3 {
+        font-size: 18px;
+    }
+    
+    .order-header h3 {
+        font-size: 18px;
+    }
+    
+    .tracking-form input[type="text"],
+    .tracking-form button {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+}
+
+
+.tracking-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.tracking-header h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.tracking-header p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.tracking-code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.status {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.status.status-entregue { background: #d4edda; color: #155724; }
+.status.status-em_transito { background: #d1ecf1; color: #0c5460; }
+.status.status-postado { background: #fff3cd; color: #856404; }
+.status.status-taxado { background: #f8d7da; color: #721c24; }
+
+.track-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #0073aa;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.track-link:hover {
+    background: #005a87;
+    color: white;
+}
+
+.tracking-timeline h5 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.timeline-container {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e0e0e0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -18px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: #ccc;
+    z-index: 1;
+}
+
+.timeline-marker-delivered { background: #28a745; }
+.timeline-marker-out_for_delivery { background: #17a2b8; }
+.timeline-marker-in_transit { background: #ffc107; }
+.timeline-marker-posted { background: #6c757d; }
+.timeline-marker-picked_up { background: #fd7e14; }
+.timeline-marker-info { background: #6f42c1; }
+
+.timeline-item-current .timeline-marker {
+    width: 16px;
+    height: 16px;
+    left: -20px;
+    top: -6px;
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.2);
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #dee2e6;
+    margin-left: 12px;
+}
+
+.timeline-item-current .timeline-content {
+    background: #e8f5e8;
+    border-left-color: #28a745;
+}
+
+.timeline-date {
+    font-size: 0.85em;
+    color: #6c757d;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.timeline-description {
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.timeline-location {
+    font-size: 0.85em;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.tracking-simple {
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .tracking-result {
+        padding: 15px;
+    }
+    
+    .timeline-container {
+        padding-left: 25px;
+    }
+    
+    .timeline-marker {
+        left: -15px;
+    }
+    
+    .timeline-item-current .timeline-marker {
+        left: -17px;
+    }
+}

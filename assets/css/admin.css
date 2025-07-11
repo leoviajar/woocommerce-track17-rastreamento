@@ -1,0 +1,199 @@
+/* Estilos para o admin do WooCommerce Track17 */
+
+/* Status de rastreamento */
+.wc-track17-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.wc-track17-status-sem-rastreio {
+    background-color: #95a5a6;
+}
+
+.wc-track17-status-sem-informacoes {
+    background-color: #bdc3c7;
+    color: #2c3e50;
+}
+
+.wc-track17-status-postado {
+    background-color: #3498db;
+}
+
+.wc-track17-status-em-transito {
+    background-color: #f39c12;
+}
+
+.wc-track17-status-entregue {
+    background-color: #27ae60;
+}
+
+.wc-track17-status-taxado {
+    background-color: #e67e22;
+}
+
+.wc-track17-status-devolvido {
+    background-color: #34495e;
+}
+
+.wc-track17-status-falha-entrega {
+    background-color: #e74c3c;
+}
+
+.wc-track17-status-aguardando-retirada {
+    background-color: #9b59b6;
+}
+
+.wc-track17-status-excecao {
+    background-color: #e74c3c;
+}
+
+/* Meta box de rastreamento */
+.wc-track17-meta-box {
+    padding: 10px 0;
+}
+
+.wc-track17-meta-box p {
+    margin: 8px 0;
+}
+
+.wc-track17-meta-box .button {
+    margin-top: 10px;
+}
+
+/* Campos de rastreamento na página do pedido */
+.wc-track17-tracking-fields {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.wc-track17-tracking-fields h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #23282d;
+}
+
+/* Spinner personalizado */
+#wc-track17-spinner {
+    float: none;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+/* Botão de atualização */
+#wc-track17-update-tracking {
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+}
+
+#wc-track17-update-tracking:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+#wc-track17-update-tracking:disabled {
+    background: #ccc !important;
+    border-color: #ccc !important;
+    cursor: not-allowed;
+}
+
+/* Coluna de rastreamento na lista de pedidos */
+.column-tracking_status {
+    width: 120px;
+}
+
+/* Responsividade */
+@media (max-width: 782px) {
+    .wc-track17-status {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    .column-tracking_status {
+        width: auto;
+    }
+}
+
+/* Estilos para WooCommerce HPOS */
+.woocommerce_page_wc-orders .wc-track17-status {
+    white-space: nowrap;
+}
+
+/* Avisos e notificações */
+.wc-track17-notice {
+    padding: 12px;
+    margin: 5px 0 15px;
+    border-left: 4px solid #0073aa;
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+
+.wc-track17-notice.error {
+    border-left-color: #dc3232;
+}
+
+.wc-track17-notice.success {
+    border-left-color: #46b450;
+}
+
+.wc-track17-notice.warning {
+    border-left-color: #ffb900;
+}
+
+/* Formulário de configurações */
+.wc-track17-settings-form .form-table th {
+    width: 200px;
+}
+
+.wc-track17-settings-form input[type="text"],
+.wc-track17-settings-form input[type="url"],
+.wc-track17-settings-form select {
+    width: 400px;
+}
+
+.wc-track17-settings-form .description {
+    max-width: 600px;
+}
+
+/* Botões de ação */
+.wc-track17-action-buttons {
+    margin-top: 15px;
+}
+
+.wc-track17-action-buttons .button {
+    margin-right: 10px;
+}
+
+/* Loading state */
+.wc-track17-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.wc-track17-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: wc-track17-spin 1s linear infinite;
+}
+
+@keyframes wc-track17-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+

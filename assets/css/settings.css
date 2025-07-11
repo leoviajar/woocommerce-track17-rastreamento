@@ -1,0 +1,328 @@
+/* Estilos para a página de configurações Track17 */
+
+.wc-track17-settings-page {
+    max-width: 800px;
+}
+
+/* Seção de informações */
+.wc-track17-info-box {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.wc-track17-info-box h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1d2327;
+}
+
+.wc-track17-info-box ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.wc-track17-info-box li {
+    margin-bottom: 8px;
+    color: #50575e;
+}
+
+/* Campos de configuração */
+.wc-track17-settings-form .form-table th {
+    width: 220px;
+    padding: 20px 10px 20px 0;
+    vertical-align: top;
+}
+
+.wc-track17-settings-form .form-table td {
+    padding: 15px 10px;
+    vertical-align: top;
+}
+
+.wc-track17-settings-form input[type="text"],
+.wc-track17-settings-form input[type="url"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.wc-track17-settings-form input[type="text"]:focus,
+.wc-track17-settings-form input[type="url"]:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.wc-track17-settings-form select {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.wc-track17-settings-form .description {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.5;
+    max-width: 500px;
+}
+
+/* Botões de ação */
+.wc-track17-action-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#test-api-key {
+    background: #f0f0f1;
+    border: 1px solid #8c8f94;
+    color: #2c3338;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#test-api-key:hover {
+    background: #e0e0e0;
+    border-color: #646970;
+}
+
+#test-api-key:disabled {
+    background: #f6f7f7;
+    border-color: #dcdcde;
+    color: #a7aaad;
+    cursor: not-allowed;
+}
+
+#copy-webhook-url {
+    background: #f0f0f1;
+    border: 1px solid #8c8f94;
+    color: #2c3338;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#copy-webhook-url:hover {
+    background: #e0e0e0;
+    border-color: #646970;
+}
+
+/* Resultado do teste da API */
+#api-test-result {
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#api-test-result .success {
+    color: #00a32a;
+}
+
+#api-test-result .error {
+    color: #d63638;
+}
+
+/* Checkbox personalizado */
+.wc-track17-settings-form input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.wc-track17-settings-form label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #1d2327;
+    cursor: pointer;
+}
+
+/* Seção de webhook */
+.wc-track17-webhook-section {
+    background: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.wc-track17-webhook-section code {
+    background: #f1f1f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 12px;
+    color: #d63638;
+}
+
+/* Estados de loading */
+.wc-track17-loading-inline {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: wc-track17-settings-spin 1s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+@keyframes wc-track17-settings-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Avisos e alertas */
+.wc-track17-alert {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 15px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.wc-track17-alert.success {
+    background: #d1eddd;
+    border-left: 4px solid #00a32a;
+    color: #00a32a;
+}
+
+.wc-track17-alert.error {
+    background: #f8d7da;
+    border-left: 4px solid #d63638;
+    color: #d63638;
+}
+
+.wc-track17-alert.warning {
+    background: #fff3cd;
+    border-left: 4px solid #dba617;
+    color: #856404;
+}
+
+.wc-track17-alert.info {
+    background: #cce7f0;
+    border-left: 4px solid #0073aa;
+    color: #0073aa;
+}
+
+/* Responsividade */
+@media (max-width: 782px) {
+    .wc-track17-settings-form .form-table th,
+    .wc-track17-settings-form .form-table td {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+    }
+    
+    .wc-track17-settings-form .form-table th {
+        border-bottom: none;
+        padding-bottom: 5px;
+    }
+    
+    .wc-track17-settings-form input[type="text"],
+    .wc-track17-settings-form input[type="url"],
+    .wc-track17-settings-form select {
+        max-width: 100%;
+    }
+    
+    .wc-track17-action-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .wc-track17-info-box {
+        padding: 15px;
+    }
+}
+
+/* Animações */
+.wc-track17-settings-form .form-table tr {
+    animation: wc-track17-settings-fade-in 0.3s ease-out;
+}
+
+@keyframes wc-track17-settings-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tooltips */
+.wc-track17-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.wc-track17-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1d2327;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+}
+
+.wc-track17-tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Seção de ajuda */
+.wc-track17-help-section {
+    background: #f0f6fc;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.wc-track17-help-section h3 {
+    margin-top: 0;
+    color: #0073aa;
+}
+
+.wc-track17-help-section p {
+    margin-bottom: 10px;
+    color: #50575e;
+}
+
+.wc-track17-help-section a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.wc-track17-help-section a:hover {
+    text-decoration: underline;
+}
+
