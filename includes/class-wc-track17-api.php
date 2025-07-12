@@ -50,7 +50,7 @@ class WC_Track17_API {
      * @param array $additional_params Parâmetros adicionais (opcional)
      * @return array|WP_Error Resposta da API ou erro
      */
-    public function register_tracking($tracking_number, $carrier_code = '', $additional_params = array()) {
+    public function register_tracking($tracking_number, $carrier_code = '', $additional_params = array(), $order_id = null) {
         if (empty($this->api_key)) {
             return new WP_Error('no_api_key', __('Chave da API Track17 não configurada.', 'wc-track17-rastreamento'));
         }
@@ -69,6 +69,10 @@ class WC_Track17_API {
         // Adiciona o código da transportadora se fornecido
         if (!empty($carrier_code)) {
             $tracking_data['carrier'] = $carrier_code;
+        }
+
+        if (!empty($order_id)) {
+            $tracking_data['tag'] = 'Pedido #' . $order_id;
         }
 
         // Adiciona parâmetros adicionais se fornecidos
@@ -362,4 +366,3 @@ class WC_Track17_API {
         return true;
     }
 }
-

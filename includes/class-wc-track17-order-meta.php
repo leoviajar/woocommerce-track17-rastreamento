@@ -432,7 +432,8 @@ class WC_Track17_Order_Meta {
         }
         
         $api = WC_Track17_API::get_instance();
-        $result = $api->register_tracking($tracking_code, $carrier_code);
+        // Passa o ID do pedido para que a tag seja criada automaticamente
+        $result = $api->register_tracking($tracking_code, $carrier_code, array(), $order_id);
         
         if (!is_wp_error($result) && $result['success']) {
             $order->update_meta_data('_wc_track17_registered', 'yes');
@@ -464,4 +465,3 @@ class WC_Track17_Order_Meta {
         return isset($labels[$status]) ? $labels[$status] : __('Desconhecido', 'wc-track17-rastreamento');
     }
 }
-
