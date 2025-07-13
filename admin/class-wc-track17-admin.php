@@ -68,37 +68,55 @@ class WC_Track17_Admin {
      * Enfileira scripts e estilos do admin
      */
     public function enqueue_admin_assets($hook) {
-        // Carrega apenas nas páginas relevantes
-        if (in_array($hook, array('post.php', 'post-new.php', 'edit.php'))) {
-            global $post_type;
-            if ($post_type === 'shop_order') {
-                wp_enqueue_style(
-                    'wc-track17-admin',
-                    WC_TRACK17_PLUGIN_URL . 'assets/css/admin.css',
-                    array(),
-                    WC_TRACK17_VERSION
-                );
-                
-                wp_enqueue_script(
-                    'wc-track17-admin',
-                    WC_TRACK17_PLUGIN_URL . 'assets/js/admin.js',
-                    array('jquery'),
-                    WC_TRACK17_VERSION,
-                    true
-                );
-                
-                wp_localize_script('wc-track17-admin', 'wc_track17_admin', array(
-                    'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('wc_track17_admin'),
-                    'strings' => array(
-                        'updating' => __('Atualizando...', 'wc-track17-rastreamento'),
-                        'update_success' => __('Rastreamento atualizado com sucesso!', 'wc-track17-rastreamento'),
-                        'update_error' => __('Erro ao atualizar rastreamento:', 'wc-track17-rastreamento'),
-                        'confirm_update_all' => __('Tem certeza que deseja atualizar todos os rastreamentos? Esta operação pode demorar alguns minutos.', 'wc-track17-rastreamento')
-                    )
-                ));
-            }
+    // Verificação mais ampla para todas as páginas relacionadas a pedidos
+    $is_order_related = (
+        // Hooks tradicionais
+        in_array($hook, array('post.php', 'post-new.php', 'edit.php')) ||
+        // Páginas específicas do WooCommerce
+        strpos($hook, 'woocommerce') !== false ||
+        strpos($hook, 'shop_order') !== false ||
+        strpos($hook, 'wc-orders') !== false
+    );
+    
+    if ($is_order_related) {
+        global $post_type;
+        $screen = get_current_screen();
+        
+        // Múltiplas verificações para garantir que estamos numa página de pedido
+        if (
+            ($post_type === 'shop_order') ||
+            ($screen && isset($screen->post_type) && $screen->post_type === 'shop_order') ||
+            ($screen && strpos($screen->id, 'shop_order') !== false) ||
+            ($screen && strpos($screen->base, 'shop_order') !== false) ||
+            ($screen && $screen->id === wc_get_page_screen_id('shop-order'))
+        ) {
+            wp_enqueue_style(
+                'wc-track17-admin',
+                WC_TRACK17_PLUGIN_URL . 'assets/css/admin.css',
+                array(),
+                WC_TRACK17_VERSION
+            );
+            
+            wp_enqueue_script(
+                'wc-track17-admin',
+                WC_TRACK17_PLUGIN_URL . 'assets/js/admin.js',
+                array('jquery'),
+                WC_TRACK17_VERSION,
+                true
+            );
+            
+            wp_localize_script('wc-track17-admin', 'wc_track17_admin', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('wc_track17_admin'),
+                'strings' => array(
+                    'updating' => __('Atualizando...', 'wc-track17-rastreamento'),
+                    'update_success' => __('Rastreamento atualizado com sucesso!', 'wc-track17-rastreamento'),
+                    'update_error' => __('Erro ao atualizar rastreamento:', 'wc-track17-rastreamento'),
+                    'confirm_update_all' => __('Tem certeza que deseja atualizar todos os rastreamentos? Esta operação pode demorar alguns minutos.', 'wc-track17-rastreamento')
+                )
+            ));
         }
+    }
         
         // Carrega na página de configurações
         if ($hook === 'woocommerce_page_wc-track17-settings') {
@@ -488,4 +506,3 @@ class WC_Track17_Admin {
         <?php
     }
 }
-
