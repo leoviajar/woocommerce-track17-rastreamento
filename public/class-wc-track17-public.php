@@ -80,58 +80,180 @@ class WC_Track17_Public {
      * Manipulador para o endpoint REST. Reutiliza a lógica original
      * mas adapta a forma como os dados são recebidos.
      * MODIFICADO: Agora busca e processa a timeline completa da API 17TRACK
+     * MODIFICADO: Agora suporta busca por telefone além de e-mail
      */
     public function public_tracking_ajax_rest_handler(WP_REST_Request $request) {
-        $nonce = $request->get_header('X-WP-Nonce');
+        $nonce = $request->get_header("X-WP-Nonce");
         $params = $request->get_json_params();
-        $tracking_code = isset($params['tracking_code']) ? sanitize_text_field($params['tracking_code']) : '';
+        $tracking_code = isset($params["tracking_code"]) ? sanitize_text_field($params["tracking_code"]) : "";
+        $email_or_phone = isset($params["email"]) ? sanitize_text_field($params["email"]) : "";
+        $order_number = isset($params["order_number"]) ? sanitize_text_field($params["order_number"]) : "";
 
         // Verificação de Nonce (adaptada para a API REST)
-        if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
-            return new WP_Error('rest_nonce_invalid', __('Erro de segurança.', 'wc-track17-rastreamento'), array('status' => 403));
+        if (!$nonce || !wp_verify_nonce($nonce, "wp_rest")) {
+            return new WP_Error("rest_nonce_invalid", __("Erro de segurança.", "wc-track17-rastreamento"), array("status" => 403));
         }
 
-        if (empty($tracking_code)) {
-            return new WP_Error('bad_request', __('Código de rastreamento é obrigatório.', 'wc-track17-rastreamento'), array('status' => 400));
+        if (empty($tracking_code) && (empty($email_or_phone) || empty($order_number))) {
+            return new WP_Error("bad_request", __("Por favor, insira um código de rastreamento ou e-mail/telefone e número do pedido.", "wc-track17-rastreamento"), array("status" => 400));
         }
 
-        // A mesma lógica de busca de antes
-        $orders = wc_get_orders(array(
-            'limit'      => 1,
-            'meta_query' => array(
-                array(
-                    'key'     => '_wc_track17_tracking_code',
-                    'value'   => $tracking_code,
-                    'compare' => '=',
+        $orders = array();
+
+        if (!empty($tracking_code)) {
+            // Busca por código de rastreamento
+            $orders = wc_get_orders(array(
+                "limit"      => 1,
+                "meta_query" => array(
+                    array(
+                        "key"     => "_wc_track17_tracking_code",
+                        "value"   => $tracking_code,
+                        "compare" => "=",
+                    ),
                 ),
-            ),
-        ));
+            ));
+        } elseif (!empty($email_or_phone) && !empty($order_number)) {
+            // MODIFICADO: Busca por e-mail OU telefone e número do pedido
+            $orders = $this->find_order_by_email_or_phone_and_number($email_or_phone, $order_number);
+        }
 
         if (empty($orders)) {
-            return new WP_Error('not_found', __('Código de rastreamento não encontrado.', 'wc-track17-rastreamento'), array('status' => 404));
+            return new WP_Error("not_found", __("Pedido não encontrado com os dados fornecidos.", "wc-track17-rastreamento"), array("status" => 404));
         }
 
         // Se encontrou, monta a resposta de sucesso
         $order = $orders[0];
         $order_meta = WC_Track17_Order_Meta::get_instance();
         $carriers = WC_Track17_API::get_instance()->get_supported_carriers();
-        $carrier_code = $order->get_meta('_wc_track17_carrier_code');
+        $carrier_code = $order->get_meta("_wc_track17_carrier_code");
+        $tracking_code_found = $order->get_meta("_wc_track17_tracking_code");
 
         // NOVO: Busca a timeline completa da API 17TRACK
-        $timeline = $this->get_tracking_timeline($tracking_code);
+        $timeline = $this->get_tracking_timeline($tracking_code_found);
 
         $result = array(
-            'order_number'         => $order->get_order_number(),
-            'tracking_code'        => $tracking_code,
-            'tracking_status'      => $order->get_meta('_wc_track17_tracking_status'),
-            'tracking_status_label'=> $order_meta->get_status_label($order->get_meta('_wc_track17_tracking_status')),
-            'carrier_name'         => isset($carriers[$carrier_code]) ? $carriers[$carrier_code] : '',
-            'last_update'          => $order->get_meta('_wc_track17_last_update') ? date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($order->get_meta('_wc_track17_last_update'))) : '',
-            'track_url'            => 'https://www.17track.net/en/track#nums=' . urlencode($tracking_code),
-            'timeline'             => $timeline, // NOVO: Adiciona a timeline
+            "order_number"         => $order->get_order_number(),
+            "tracking_code"        => $tracking_code_found,
+            "tracking_status"      => $order->get_meta("_wc_track17_tracking_status"),
+            "tracking_status_label"=> $order_meta->get_status_label($order->get_meta("_wc_track17_tracking_status")),
+            "carrier_name"         => isset($carriers[$carrier_code]) ? $carriers[$carrier_code] : "",
+            "last_update"          => $order->get_meta("_wc_track17_last_update") ? date_i18n(get_option("date_format") . " " . get_option("time_format"), strtotime($order->get_meta("_wc_track17_last_update"))) : "",
+            "track_url"            => "https://www.17track.net/en/track#nums=" . urlencode($tracking_code_found),
+            "timeline"             => $timeline, // NOVO: Adiciona a timeline
         );
 
         return new WP_REST_Response($result, 200);
+    }
+
+    /**
+     * NOVA FUNÇÃO: Busca pedido por e-mail OU telefone e número do pedido
+     */
+    private function find_order_by_email_or_phone_and_number($email_or_phone, $order_number) {
+        $orders = array();
+        
+        // Primeiro, tenta identificar se é um e-mail ou telefone
+        if ($this->is_email($email_or_phone)) {
+            // É um e-mail - busca por usuário
+            $user = get_user_by('email', $email_or_phone);
+            if ($user) {
+                $customer_orders = wc_get_orders(array(
+                    "limit"      => -1,
+                    "customer"   => $user->ID,
+                ));
+
+                foreach ($customer_orders as $customer_order) {
+                    if ($customer_order->get_order_number() == $order_number) {
+                        $orders[] = $customer_order;
+                        break;
+                    }
+                }
+            }
+        } else {
+            // Assume que é um telefone - busca por meta de telefone
+            $orders = $this->find_order_by_phone_and_number($email_or_phone, $order_number);
+        }
+        
+        return $orders;
+    }
+
+    /**
+     * NOVA FUNÇÃO: Verifica se o valor é um e-mail válido
+     */
+    private function is_email($value) {
+        return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    /**
+     * NOVA FUNÇÃO: Busca pedido por telefone e número do pedido
+     */
+    private function find_order_by_phone_and_number($phone, $order_number) {
+        // Limpa o telefone removendo caracteres especiais
+        $clean_phone = $this->clean_phone_number($phone);
+        
+        // Busca todos os pedidos que tenham o número especificado
+        $all_orders = wc_get_orders(array(
+            'limit' => -1,
+            'status' => array('processing', 'on-hold', 'completed', 'pending'),
+        ));
+        
+        foreach ($all_orders as $order) {
+            // Verifica se o número do pedido corresponde
+            if ($order->get_order_number() != $order_number) {
+                continue;
+            }
+            
+            // Verifica telefone de cobrança
+            $billing_phone = $this->clean_phone_number($order->get_billing_phone());
+            if ($billing_phone === $clean_phone) {
+                return array($order);
+            }
+            
+            // Verifica telefone de entrega (se diferente)
+            $shipping_phone = $this->clean_phone_number($order->get_shipping_phone());
+            if ($shipping_phone && $shipping_phone === $clean_phone) {
+                return array($order);
+            }
+            
+            // Verifica telefones em meta customizados (caso existam)
+            $meta_phones = array(
+                $order->get_meta('_billing_cellphone'),
+                $order->get_meta('_shipping_cellphone'),
+                $order->get_meta('_billing_phone_2'),
+                $order->get_meta('_shipping_phone_2'),
+            );
+            
+            foreach ($meta_phones as $meta_phone) {
+                if ($meta_phone && $this->clean_phone_number($meta_phone) === $clean_phone) {
+                    return array($order);
+                }
+            }
+        }
+        
+        return array();
+    }
+
+    /**
+     * NOVA FUNÇÃO: Limpa número de telefone para comparação
+     */
+    private function clean_phone_number($phone) {
+        if (empty($phone)) {
+            return '';
+        }
+        
+        // Remove todos os caracteres que não sejam números
+        $clean = preg_replace('/[^0-9]/', '', $phone);
+        
+        // Remove códigos de país comuns do Brasil
+        if (strlen($clean) === 13 && substr($clean, 0, 2) === '55') {
+            $clean = substr($clean, 2); // Remove +55
+        }
+        
+        // Remove zero inicial de DDD se presente
+        if (strlen($clean) === 11 && substr($clean, 0, 1) === '0') {
+            $clean = substr($clean, 1);
+        }
+        
+        return $clean;
     }
 
     /**
@@ -258,6 +380,7 @@ class WC_Track17_Public {
                 'not_found'    => __('Código de rastreamento não encontrado.', 'wc-track17-rastreamento'),
                 'error'        => __('Ocorreu um erro no servidor. Por favor, tente novamente mais tarde.', 'wc-track17-rastreamento'),
                 'invalid_code' => __('Por favor, insira um código de rastreamento válido.', 'wc-track17-rastreamento'),
+                'invalid_input' => __('Por favor, insira um código de rastreamento ou e-mail/telefone e número do pedido.', 'wc-track17-rastreamento'),
             ),
         ));
         }
@@ -367,33 +490,62 @@ class WC_Track17_Public {
     /**
      * Shortcode para rastreamento
      */
-    public function tracking_shortcode($atts) {
+public function tracking_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'title' => __('Rastrear Pedido', 'wc-track17-rastreamento'),
-            'placeholder' => __('ex.: BR250122692139901', 'wc-track17-rastreamento'),
-            'button_text' => __('Rastrear', 'wc-track17-rastreamento')
+            'placeholder_tracking' => __('Número de Rastreio', 'wc-track17-rastreamento'),
+            'placeholder_email' => __('E-mail / Telefone', 'wc-track17-rastreamento'),
+            'placeholder_order' => __('Número do Pedido', 'wc-track17-rastreamento'),
+            'button_text' => __('Localizar', 'wc-track17-rastreamento')
         ), $atts);
         
         ob_start();
         ?>
-        <div class="wc-track17-tracking-form">
-            <h3><?php echo esc_html($atts['title']); ?></h3>
+        <div class="wc-track17-container">
             
-            <form id="wc-track17-public-form" class="tracking-form">
-                <div class="form-group">
-                    <input type="text" 
-                           id="tracking-code-input" 
-                           name="tracking_code" 
-                           placeholder="<?php echo esc_attr($atts['placeholder']); ?>" 
-                           required />
-                    <button type="submit" class="button">
-                        <?php echo esc_html($atts['button_text']); ?>
-                    </button>
-                </div>
-            </form>
-            
+            <div class="wc-track17-tracking-form">
+                
+                <form id="wc-track17-public-form" class="tracking-form">
+    
+                    <div class="form-group-wrapper">
+    
+                        <div class="form-group form-group-email-order">
+                            <input type="text" 
+                                   id="email-input" 
+                                   name="email" 
+                                   placeholder="<?php echo esc_attr($atts['placeholder_email']); ?>" />
+                            <input type="text" 
+                                   id="order-number-input" 
+                                   name="order_number" 
+                                   placeholder="<?php echo esc_attr($atts['placeholder_order']); ?>" />
+                            <button type="submit" class="button">
+                                <?php echo esc_html($atts['button_text']); ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="or-separator"><span><?php _e('Ou', 'wc-track17-rastreamento'); ?></span></div>
+                
+                <form id="wc-track17-public-form" class="tracking-form">
+    
+                    <div class="form-group-wrapper">
+    
+                        <div class="form-group form-group-tracking-code">
+                            <input type="text" 
+                                   id="tracking-code-input" 
+                                   name="tracking_code" 
+                                   placeholder="<?php echo esc_attr($atts['placeholder_tracking']); ?>" />
+                            <button type="submit" class="button">
+                                <?php echo esc_html($atts['button_text']); ?>
+                            </button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
             <div id="tracking-result" class="tracking-result" style="display: none;"></div>
         </div>
+        
         <?php
         return ob_get_clean();
     }
@@ -548,7 +700,6 @@ class WC_Track17_Tracking_Widget extends WP_Widget {
     }
 
     public function widget($args, $instance) {
-        $title = !empty($instance['title']) ? $instance['title'] : __('Rastrear Pedido', 'wc-track17-rastreamento');
         $placeholder = !empty($instance['placeholder']) ? $instance['placeholder'] : __('Digite o código de rastreamento', 'wc-track17-rastreamento');
         
         echo $args['before_widget'];
@@ -563,7 +714,6 @@ class WC_Track17_Tracking_Widget extends WP_Widget {
     }
 
     public function form($instance) {
-        $title = !empty($instance['title']) ? $instance['title'] : __('Rastrear Pedido', 'wc-track17-rastreamento');
         $placeholder = !empty($instance['placeholder']) ? $instance['placeholder'] : __('Digite o código de rastreamento', 'wc-track17-rastreamento');
         ?>
         <p>

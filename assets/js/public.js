@@ -1,5 +1,7 @@
 /**
  * JavaScript para o frontend público Track17
+ * MODIFICADO: Suporte a busca por telefone além de e-mail
+ * CORRIGIDO: Erro 'Cannot read properties of undefined (reading 'trim')'
  */
 
 (function($) {
@@ -31,53 +33,76 @@
             $(document).on('click', '.copy-code', this.copyTrackingCode);
             
             // Validação em tempo real
-            $(document).on('input', '#tracking-code-input', this.validateTrackingInput);
+            $(document).on("input", "#tracking-code-input, #email-input, #order-number-input", this.validateTrackingInput);
             
             // Limpar resultado ao focar no input
-            $(document).on('focus', '#tracking-code-input', this.clearPreviousResult);
+            $(document).on("focus", "#tracking-code-input, #email-input, #order-number-input", this.clearPreviousResult);
             
             // Enter key no input
-            $(document).on('keypress', '#tracking-code-input', this.handleEnterKey);
+            $(document).on("keypress", "#tracking-code-input, #email-input, #order-number-input", this.handleEnterKey);
         },
 
         /**
          * Manipula o formulário de rastreamento
+         * MODIFICADO: Agora suporta busca por telefone além de e-mail
+         * CORRIGIDO: Adicionadas verificações de existência dos elementos
          */
         handleTrackingForm: function(e) {
             e.preventDefault();
             
             var form = $(this);
-            var input = form.find('#tracking-code-input');
-            var button = form.find('button[type="submit"]');
-            var resultDiv = $('#tracking-result');
-            var trackingCode = input.val().trim();
+            var trackingCodeInput = form.find("#tracking-code-input");
+            var emailInput = form.find("#email-input");
+            var orderNumberInput = form.find("#order-number-input");
+            var button = form.find("button[type=\"submit\"]");
+            var resultDiv = $("#tracking-result");
+
+            // CORREÇÃO: Verificar se os elementos existem antes de acessar .val()
+            var trackingCode = trackingCodeInput.length ? trackingCodeInput.val().trim() : '';
+            var emailOrPhone = emailInput.length ? emailInput.val().trim() : '';
+            var orderNumber = orderNumberInput.length ? orderNumberInput.val().trim() : '';
             
-            // Validação básica
-            if (!trackingCode) {
-                WCTrack17Public.showError(wc_track17_public.strings.invalid_code);
-                input.focus();
+            // Validação: ou código de rastreamento OU e-mail/telefone E número do pedido
+            if ( ( !trackingCode && (!emailOrPhone || !orderNumber) ) || ( trackingCode && (emailOrPhone || orderNumber) ) ) {
+                WCTrack17Public.showError(wc_track17_public.strings.invalid_input);
+                return;
+            }
+            
+            // NOVO: Validação específica para telefone/e-mail
+            if (emailOrPhone && !WCTrack17Public.isValidEmailOrPhone(emailOrPhone)) {
+                WCTrack17Public.showError('Por favor, insira um e-mail ou telefone válido.');
                 return;
             }
             
             // Estado de loading
-            button.prop('disabled', true).text(wc_track17_public.strings.searching);
-            input.prop('disabled', true);
+            button.prop("disabled", true).text(wc_track17_public.strings.searching);
+            
+            // CORREÇÃO: Verificar se os elementos existem antes de desabilitá-los
+            if (trackingCodeInput.length) trackingCodeInput.prop("disabled", true);
+            if (emailInput.length) emailInput.prop("disabled", true);
+            if (orderNumberInput.length) orderNumberInput.prop("disabled", true);
+            
             resultDiv.hide();
             
+            var requestData = {};
+            if (trackingCode) {
+                requestData.tracking_code = trackingCode;
+            } else {
+                // MODIFICADO: Agora envia como "email" mas pode ser telefone também
+                requestData.email = emailOrPhone;
+                requestData.order_number = orderNumber;
+            }
+
             // Requisição AJAX
             $.ajax({
                 url: wc_track17_public.api_url,
-                type: 'POST',
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({
-                    tracking_code: trackingCode
-                }),
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(requestData),
                 beforeSend: function(xhr) {
-                    xhr.setRequestHeader('X-WP-Nonce', wc_track17_public.nonce);
+                    xhr.setRequestHeader("X-WP-Nonce", wc_track17_public.nonce);
                 },
                 success: function(response) {
-                    // A API REST já retorna o objeto de dados diretamente em caso de sucesso
-                    // A função showTrackingResult espera um objeto 'data', que é o próprio 'response' aqui.
                     WCTrack17Public.showTrackingResult(response);
                 },
                 error: function(jqXHR) {
@@ -88,10 +113,70 @@
                     WCTrack17Public.showError(errorMessage);
                 },
                 complete: function() {
-                    button.prop('disabled', false).text(form.find('button[type="submit"]').data('original-text') || 'Rastrear');
-                    input.prop('disabled', false);
+                    button.prop("disabled", false).text(button.data("original-text") || "Localizar");
+                    
+                    // CORREÇÃO: Verificar se os elementos existem antes de reabilitá-los
+                    if (trackingCodeInput.length) trackingCodeInput.prop("disabled", false);
+                    if (emailInput.length) emailInput.prop("disabled", false);
+                    if (orderNumberInput.length) orderNumberInput.prop("disabled", false);
                 }
             });
+        },
+
+        /**
+         * NOVA FUNÇÃO: Valida se o input é um e-mail ou telefone válido
+         */
+        isValidEmailOrPhone: function(value) {
+            // Verifica se é um e-mail válido
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailRegex.test(value)) {
+                return true;
+            }
+            
+            // Verifica se é um telefone válido (aceita vários formatos)
+            var phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+            var cleanPhone = value.replace(/[^\d]/g, '');
+            
+            // Telefone deve ter pelo menos 8 dígitos e no máximo 15
+            if (phoneRegex.test(value) && cleanPhone.length >= 8 && cleanPhone.length <= 15) {
+                return true;
+            }
+            
+            return false;
+        },
+
+        /**
+         * NOVA FUNÇÃO: Detecta se o valor é um e-mail ou telefone
+         */
+        detectInputType: function(value) {
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailRegex.test(value)) {
+                return 'email';
+            }
+            
+            var phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+            if (phoneRegex.test(value)) {
+                return 'phone';
+            }
+            
+            return 'unknown';
+        },
+
+        /**
+         * NOVA FUNÇÃO: Formata telefone para exibição
+         */
+        formatPhoneDisplay: function(phone) {
+            // Remove caracteres não numéricos
+            var clean = phone.replace(/[^\d]/g, '');
+            
+            // Formata telefone brasileiro
+            if (clean.length === 11) {
+                return '(' + clean.substring(0, 2) + ') ' + clean.substring(2, 7) + '-' + clean.substring(7);
+            } else if (clean.length === 10) {
+                return '(' + clean.substring(0, 2) + ') ' + clean.substring(2, 6) + '-' + clean.substring(6);
+            }
+            
+            return phone; // Retorna original se não conseguir formatar
         },
 
         /**
@@ -225,50 +310,11 @@
         },
 
         /**
-         * Valida input de rastreamento
-         */
-        validateTrackingInput: function() {
-            var input = $(this);
-            var value = input.val().trim();
-            var feedback = input.siblings('.validation-feedback');
-            
-            // Remove feedback anterior
-            feedback.remove();
-            
-            if (value === '') {
-                return;
-            }
-            
-            // Validações básicas
-            var isValid = true;
-            var message = '';
-            
-            if (value.length < 8) {
-                isValid = false;
-                message = 'Código muito curto';
-            } else if (value.length > 30) {
-                isValid = false;
-                message = 'Código muito longo';
-            } else if (!/^[A-Z0-9]+$/i.test(value)) {
-                isValid = false;
-                message = 'Apenas letras e números são permitidos';
-            }
-            
-            // Adiciona feedback visual
-            if (!isValid) {
-                input.after('<span class="validation-feedback error">' + message + '</span>');
-                input.addClass('invalid');
-            } else {
-                input.removeClass('invalid');
-            }
-        },
-
-        /**
          * Limpa resultado anterior
          */
         clearPreviousResult: function() {
             $('#tracking-result').hide();
-            $(this).removeClass('invalid');
+            $(this).removeClass('invalid valid');
             $(this).siblings('.validation-feedback').remove();
         },
 
@@ -299,6 +345,23 @@
                     firstInput.focus();
                 }, 500);
             }
+            
+            // NOVO: Adiciona dicas visuais para o campo e-mail/telefone
+            $('#email-input').on('input', function() {
+                var value = $(this).val().trim();
+                var placeholder = $(this).attr('placeholder');
+                
+                if (value.length > 0) {
+                    var type = WCTrack17Public.detectInputType(value);
+                    if (type === 'email') {
+                        $(this).attr('placeholder', 'E-mail detectado');
+                    } else if (type === 'phone') {
+                        $(this).attr('placeholder', 'Telefone detectado');
+                    }
+                } else {
+                    $(this).attr('placeholder', 'E-mail / Telefone');
+                }
+            });
         },
 
         /**
