@@ -498,6 +498,9 @@ public function tracking_shortcode($atts) {
             'button_text' => __('Localizar', 'wc-track17-rastreamento')
         ), $atts);
         
+        // NOVO: Obtém código de rastreio da URL se presente
+        $tracking_code_from_url = isset($_GET['codigo']) ? sanitize_text_field($_GET['codigo']) : '';
+        
         ob_start();
         ?>
         <div class="wc-track17-container">
@@ -534,7 +537,8 @@ public function tracking_shortcode($atts) {
                             <input type="text" 
                                    id="tracking-code-input" 
                                    name="tracking_code" 
-                                   placeholder="<?php echo esc_attr($atts['placeholder_tracking']); ?>" />
+                                   placeholder="<?php echo esc_attr($atts['placeholder_tracking']); ?>"
+                                   value="<?php echo esc_attr($tracking_code_from_url); ?>" />
                             <button type="submit" class="button">
                                 <?php echo esc_html($atts['button_text']); ?>
                             </button>

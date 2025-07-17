@@ -51,8 +51,8 @@ class WC_Track17_Dashboard {
      */
     public function add_dashboard_menu() {
         add_menu_page(
-            __('Dashboard Track17', 'wc-track17-rastreamento'),
-            __('Track17 Dashboard', 'wc-track17-rastreamento'),
+            __('Dashboard Rastreamento', 'wc-track17-rastreamento'),
+            __('Dashboard Rastreamento', 'wc-track17-rastreamento'),
             'manage_woocommerce',
             'wc-track17-dashboard',
             array($this, 'dashboard_page_content'),
@@ -69,7 +69,7 @@ class WC_Track17_Dashboard {
         ?>
         <div class="wrap wc-track17-dashboard">
             <div class="wc-track17-header">
-                <h1><?php _e('Dashboard de Rastreamento Track17', 'wc-track17-rastreamento'); ?></h1>
+                <h1><?php _e('Dashboard Rastreamento', 'wc-track17-rastreamento'); ?></h1>
                 <button type="button" id="wc-track17-update-stats" class="button button-primary">
                     <?php _e('Atualizar Estatísticas', 'wc-track17-rastreamento'); ?>
                 </button>

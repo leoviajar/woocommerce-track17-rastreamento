@@ -55,15 +55,15 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
     
     <ol>
         <li>
-            <strong><?php _e('Em nosso site:', 'wc-track17-rastreamento'); ?></strong><br>
+            <strong><?php _e('Na sua conta:', 'wc-track17-rastreamento'); ?></strong><br>
             <a href="<?php echo esc_url($order->get_view_order_url()); ?>" style="color: #96588a; font-weight: normal; text-decoration: underline;">
                 <?php _e('Clique aqui para ver os detalhes do seu pedido', 'wc-track17-rastreamento'); ?>
             </a>
         </li>
         <li style="margin-top: 10px;">
-            <strong><?php _e('No site dos Correios/Transportadora:', 'wc-track17-rastreamento'); ?></strong><br>
-            <a href="https://www.17track.net/pt/track#nums=<?php echo urlencode($tracking_code); ?>" target="_blank" style="color: #96588a; font-weight: normal; text-decoration: underline;">
-                <?php _e('Rastrear no 17Track', 'wc-track17-rastreamento'); ?>
+            <strong><?php _e('Pelo nosso site:', 'wc-track17-rastreamento'); ?></strong><br>
+            <a href="<?php echo esc_url(home_url('/rastreio?codigo=' . urlencode($tracking_code))); ?>" target="_blank" style="color: #96588a; font-weight: normal; text-decoration: underline;">
+                <?php _e("Rastrear em nosso site", "wc-track17-rastreamento"); ?>
             </a>
         </li>
     </ol>

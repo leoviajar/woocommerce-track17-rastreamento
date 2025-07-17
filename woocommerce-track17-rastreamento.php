@@ -185,7 +185,7 @@ class WC_Track17_Rastreamento {
                 <?php 
                 echo sprintf(
                     __('O plugin %s requer o WooCommerce para funcionar. Por favor, instale e ative o WooCommerce.', 'wc-track17-rastreamento'),
-                    '<strong>WooCommerce Track17 Rastreamento</strong>'
+                    '<strong>Rastreamento</strong>'
                 );
                 ?>
             </p>

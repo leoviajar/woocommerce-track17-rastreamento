@@ -237,11 +237,36 @@
             
             resultDiv.html(html).show();
             
+            // NOVO: Adiciona código de rastreio à URL
+            if (data.tracking_code) {
+                WCTrack17Public.updateUrlWithTrackingCode(data.tracking_code);
+            }
             
             // Scroll suave para o resultado
             $('html, body').animate({
                 scrollTop: resultDiv.offset().top - 20
             }, 500);
+        },
+
+        /**
+         * NOVA FUNÇÃO: Atualiza a URL com o código de rastreio
+         */
+        updateUrlWithTrackingCode: function(trackingCode) {
+            if (!trackingCode) return;
+            
+            var url = new URL(window.location);
+            url.searchParams.set('codigo', trackingCode);
+            
+            // Atualiza a URL sem recarregar a página
+            window.history.pushState({}, '', url);
+        },
+
+        /**
+         * NOVA FUNÇÃO: Obtém código de rastreio da URL
+         */
+        getTrackingCodeFromUrl: function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('codigo') || '';
         },
 
         /**
@@ -338,12 +363,27 @@
                 button.data('original-text', button.text());
             });
             
-            // Auto-focus no primeiro input
-            var firstInput = $('.tracking-form input[type="text"]:first');
-            if (firstInput.length && !this.isMobile()) {
-                setTimeout(function() {
-                    firstInput.focus();
-                }, 500);
+            // NOVO: Verifica se há código de rastreio na URL e preenche o campo
+            var trackingCodeFromUrl = this.getTrackingCodeFromUrl();
+            if (trackingCodeFromUrl) {
+                var trackingInput = $('#tracking-code-input');
+                if (trackingInput.length) {
+                    trackingInput.val(trackingCodeFromUrl);
+                    // Automaticamente busca o rastreamento se há código na URL
+                    setTimeout(function() {
+                        trackingInput.closest('form').submit();
+                    }, 500);
+                }
+            }
+            
+            // Auto-focus no primeiro input (apenas se não há código na URL)
+            if (!trackingCodeFromUrl) {
+                var firstInput = $('.tracking-form input[type="text"]:first');
+                if (firstInput.length && !this.isMobile()) {
+                    setTimeout(function() {
+                        firstInput.focus();
+                    }, 500);
+                }
             }
             
             // NOVO: Adiciona dicas visuais para o campo e-mail/telefone

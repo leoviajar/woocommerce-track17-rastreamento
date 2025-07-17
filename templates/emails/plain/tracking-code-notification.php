@@ -39,11 +39,11 @@ echo __('COMO RASTREAR SEU PEDIDO:', 'wc-track17-rastreamento') . "\n\n";
 
 echo __('Você pode acompanhar o status do seu pedido de duas formas:', 'wc-track17-rastreamento') . "\n\n";
 
-echo "1. " . __('Em nosso site:', 'wc-track17-rastreamento') . "\n";
+echo "1. " . __('Na sua conta:', 'wc-track17-rastreamento') . "\n";
 echo "   " . $order->get_view_order_url() . "\n\n";
 
-echo "2. " . __('No site dos Correios/Transportadora:', 'wc-track17-rastreamento') . "\n";
-echo "   https://www.17track.net/pt/track#nums=" . urlencode($tracking_code) . "\n\n";
+echo "2. " . __('Pelo nosso site:', 'wc-track17-rastreamento') . "\n";
+echo "   " . home_url('/rastreio?codigo=' . urlencode($tracking_code)) . "\n\n";
 
 echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 

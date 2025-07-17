@@ -440,7 +440,7 @@
 }
 
 .status.status-entregue { background: #d4edda; color: #155724; }
-.status.status-em_transito { background: #d1ecf1; color: #0c5460; }
+.status.status-em-transito { background: #d1ecf1; color: #0c5460; }
 .status.status-postado { background: #fff3cd; color: #856404; }
 .status.status-taxado { background: #f8d7da; color: #721c24; }
 
