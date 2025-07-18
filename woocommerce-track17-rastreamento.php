@@ -1,11 +1,10 @@
 <?php
 /**
- * Plugin Name: WooCommerce Track17 Rastreamento
+ * Plugin Name: Track Orders - Rastreio
  * Plugin URI: https://github.com/seu-usuario/woocommerce-track17-rastreamento
  * Description: Plugin completo de rastreamento para WooCommerce com integração à API Track17. Permite configuração de API no painel administrativo e é compatível com HPOS.
  * Version: 1.0.0
- * Author: Seu Nome
- * Author URI: https://seusite.com
+ * Author: Leonardo
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wc-track17-rastreamento
@@ -16,6 +15,15 @@
  * WC requires at least: 6.0
  * WC tested up to: 8.5
  */
+
+require 'plugin-update-checker/plugin-update-checker.php'; 
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory; 
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/leoviajar/woocommerce-track17-rastreamento',
+    __FILE__,
+    'woocommerce-track17-rastreamento.php'
+);
 
 // Previne acesso direto
 if (!defined('ABSPATH')) {
