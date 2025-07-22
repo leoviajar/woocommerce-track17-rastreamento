@@ -112,7 +112,7 @@ class WC_Track17_Dashboard {
                 <!-- Card: Em Trânsito -->
                 <div class="wc-track17-stat-card em-transito">
                     <div class="stat-icon">
-                        <span class="dashicons dashicons-truck"></span>
+                        <span class="dashicons dashicons-location-alt"></span>
                     </div>
                     <div class="stat-content">
                         <h3><?php echo number_format_i18n($stats['em_transito']); ?></h3>
