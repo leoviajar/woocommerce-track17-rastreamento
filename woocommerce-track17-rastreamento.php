@@ -3,7 +3,7 @@
  * Plugin Name: Track Orders - Rastreio
  * Plugin URI: https://github.com/seu-usuario/woocommerce-track17-rastreamento
  * Description: Plugin completo de rastreamento para WooCommerce com integração à API Track17. Permite configuração de API no painel administrativo e é compatível com HPOS.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Leonardo
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
